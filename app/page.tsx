@@ -55,30 +55,23 @@ export default function Home() {
   const fetchPrices = async () => {
     try {
       const symbols = ASSET_MATRIX.map(c => c.id).join(',');
-      // Enforcing a fully encrypted browser protocol handshake configuration that shatters firewalls instantly
-      const res = await fetch(`https://cryptocompare.com{symbols}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        mode: 'cors'
-      });
+      // Swapping to a multi-stream request structure to pull individual asset values cleanly inside a single call
+      const res = await fetch(`https://cryptocompare.com{symbols}&tsyms=USD`);
       const data = await res.json();
       
       if (data && typeof data === 'object' && !data.Response) {
         const priceMap: Record<string, number> = {};
         Object.keys(data).forEach((key) => {
           const upperKey = key.toUpperCase();
-          if (Number(data[key]) > 0) {
-            priceMap[upperKey] = 1 / Number(data[key]);
+          if (data[key] && data[key].USD) {
+            priceMap[upperKey] = Number(data[key].USD);
           }
         });
         setPrices(priceMap);
         setLoading(false);
       }
     } catch (err) {
-      console.error('Handshake delayed, retrying...', err);
+      console.error('Error tracking live tokens:', err);
     }
   };
 
@@ -90,9 +83,10 @@ export default function Home() {
 
   useEffect(() => {
     if (!prices[fromCrypto] || !prices[toCrypto]) return;
-    const fromPrice = prices[fromCrypto];
-    const toPrice = prices[toCrypto];
-    const calculated = (parseFloat(amount) * fromPrice) / toPrice;
+    const fromPriceUsd = prices[fromCrypto];
+    const toPriceUsd = prices[toCrypto];
+    // Cross-asset calculation math: (Amount * Base Value in USD) / Target Value in USD
+    const calculated = (parseFloat(amount) * fromPriceUsd) / toPriceUsd;
     
     if (isNaN(calculated) || calculated === 0) {
       setResult('0.0000');
