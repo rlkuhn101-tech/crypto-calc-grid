@@ -68,7 +68,7 @@ export default function Home() {
           const freshPricesMap: Record<string, number> = {};
           Object.keys(networkData).forEach((key) => {
             if (networkData[key] && networkData[key].USD) {
-              freshPricesMap[key.toUpperCase()] = Number(networkData[networkKey].USD);
+              freshPricesMap[key.toUpperCase()] = Number(networkData[key].USD);
             }
           });
           setPrices(prev => ({ ...prev, ...freshPricesMap }));
@@ -101,7 +101,6 @@ export default function Home() {
     }
   }, [amount, fromCrypto, toCrypto, prices]);
 
-  // Added smart text-clipping constraints to completely prevent parent button expansion on mobile screens
   const selectStyle: React.CSSProperties = {
     width: '100%',
     padding: '14px 10px',
