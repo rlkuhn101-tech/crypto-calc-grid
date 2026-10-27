@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Crypto Calc Grid | Free Real-Time Crypto Conversion Hub",
-  description: "Convert bitcoin, ethereum, and the top 100 cryptocurrencies instantly. Free real-time interactive multi-asset swap calculator grid.",
+  description: "Convert ten core cryptocurrencies with live prices and instant cross-asset estimates.",
 };
 
 export default function RootLayout({
