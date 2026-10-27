@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Crypto Calc Grid | Free Real-Time Crypto Conversion Hub",
-  description: "Convert bitcoin, ethereum, and the top 100 cryptocurrencies instantly. Free real-time interactive multi-asset swap calculator grid.",
+  description: "Convert ten leading cryptocurrencies instantly with live CryptoCompare pricing refreshed every 30 seconds.",
 };
 
 export default function RootLayout({
