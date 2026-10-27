@@ -52,11 +52,8 @@ export default function Home() {
   const [prices, setPrices] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    // Generate an instant secure baseline pricing matrix using our fallback tickers
     const baselineMap: Record<string, number> = {};
-    ASSET_MATRIX.forEach(c => {
-      baselineMap[c.id] = c.fallbackPrice;
-    });
+    ASSET_MATRIX.forEach(c => { baselineMap[c.id] = c.fallbackPrice; });
     setPrices(baselineMap);
 
     const fetchPrices = async () => {
@@ -68,14 +65,12 @@ export default function Home() {
         if (data && typeof data === 'object' && !data.Response) {
           const apiMap: Record<string, number> = {};
           Object.keys(data).forEach((key) => {
-            if (data[key] && data[key].USD) {
-              apiMap[key.toUpperCase()] = data[key].USD;
-            }
+            if (data[key] && data[key].USD) { apiMap[key.toUpperCase()] = data[key].USD; }
           });
           setPrices(prev => ({ ...prev, ...apiMap }));
         }
       } catch (err) {
-        console.error('API loading delayed, running on internal market matrix:', err);
+        console.error('API running on internal market matrix:', err);
       }
     };
 
@@ -99,6 +94,24 @@ export default function Home() {
     }
   }, [amount, fromCrypto, toCrypto, prices]);
 
+  const selectStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '14px',
+    backgroundColor: '#0f172a',
+    color: '#fff',
+    border: '1px solid #475569',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    WebkitAppearance: 'none',
+    MozAppearance: 'none',
+    appearance: 'none',
+    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://w3.org' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 14px center',
+    backgroundSize: '16px'
+  };
+
   return (
     <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: '#e2e8f0', fontFamily: 'sans-serif', padding: '40px 16px', boxSizing: 'border-box' }}>
       <main style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -117,13 +130,13 @@ export default function Home() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>From Asset</label>
-                <select value={fromCrypto} onChange={(e) => setFromCrypto(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', color: '#fff', border: '1px solid #475569', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://w3.org\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2338bdf8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px center', backgroundSize: '16px' }}>
+                <select value={fromCrypto} onChange={(e) => setFromCrypto(e.target.value)} style={selectStyle}>
                   {ASSET_MATRIX.map((c) => ( <option key={c.id} value={c.id} style={{ backgroundColor: '#1e293b', color: '#fff' }}>{c.name} ({c.symbol})</option> ))}
                 </select>
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>To Asset</label>
-                <select value={toCrypto} onChange={(e) => setToCrypto(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', color: '#fff', border: '1px solid #475569', borderRadius: '8px', fontSize: '1rem', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://w3.org\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2338bdf8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px center', backgroundSize: '16px' }}>
+                <select value={toCrypto} onChange={(e) => setToCrypto(e.target.value)} style={selectStyle}>
                   {ASSET_MATRIX.map((c) => ( <option key={c.id} value={c.id} style={{ backgroundColor: '#1e293b', color: '#fff' }}>{c.name} ({c.symbol})</option> ))}
                 </select>
               </div>
