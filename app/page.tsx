@@ -1,112 +1,134 @@
 'use client';
-import React, { useState, useEffect } from 'react';
 
-const ASSET_MATRIX = [
-  { id: 'BTC', name: 'Bitcoin', symbol: 'BTC' }, { id: 'ETH', name: 'Ethereum', symbol: 'ETH' },
-  { id: 'SOL', name: 'Solana', symbol: 'SOL' }, { id: 'XRP', name: 'Ripple', symbol: 'XRP' },
-  { id: 'ADA', name: 'Cardano', symbol: 'ADA' }, { id: 'DOGE', name: 'Dogecoin', symbol: 'DOGE' },
-  { id: 'BNB', name: 'Binance Coin', symbol: 'BNB' }, { id: 'DOT', name: 'Polkadot', symbol: 'DOT' },
-  { id: 'LINK', name: 'Chainlink', symbol: 'LINK' }, { id: 'LTC', name: 'Litecoin', symbol: 'LTC' },
-  { id: 'AVAX', name: 'Avalanche', symbol: 'AVAX' }, { id: 'MATIC', name: 'Polygon', symbol: 'MATIC' },
-  { id: 'TRX', name: 'TRON', symbol: 'TRX' }, { id: 'UNI', name: 'Uniswap', symbol: 'UNI' },
-  { id: 'XLM', name: 'Stellar', symbol: 'XLM' }, { id: 'ATOM', name: 'Cosmos', symbol: 'ATOM' },
-  { id: 'XMR', name: 'Monero', symbol: 'XMR' }, { id: 'ETC', name: 'Ethereum Classic', symbol: 'ETC' },
-  { id: 'HBAR', name: 'Hedera', symbol: 'HBAR' }, { id: 'ICP', name: 'Internet Computer', symbol: 'ICP' },
-  { id: 'FIL', name: 'Filecoin', symbol: 'FIL' }, { id: 'APT', name: 'Aptos', symbol: 'APT' },
-  { id: 'ARB', name: 'Arbitrum', symbol: 'ARB' }, { id: 'VET', name: 'VeChain', symbol: 'VET' },
-  { id: 'NEAR', name: 'NEAR Protocol', symbol: 'NEAR' }, { id: 'MKR', name: 'Maker', symbol: 'MKR' },
-  { id: 'OP', name: 'Optimism', symbol: 'OP' }, { id: 'GRT', name: 'The Graph', symbol: 'GRT' },
-  { id: 'THETA', name: 'Theta Network', symbol: 'THETA' }, { id: 'FTM', name: 'Fantom', symbol: 'FTM' },
-  { id: 'AAVE', name: 'Aave', symbol: 'AAVE' }, { id: 'ALGO', name: 'Algorand', symbol: 'ALGO' },
-  { id: 'SAND', name: 'The Sandbox', symbol: 'SAND' }, { id: 'MANA', name: 'Decentraland', symbol: 'MANA' },
-  { id: 'EOS', name: 'EOS', symbol: 'EOS' }, { id: 'XTZ', name: 'Tezos', symbol: 'XTZ' },
-  { id: 'GALA', name: 'Gala', symbol: 'GALA' }, { id: 'BAT', name: 'Basic Attention', symbol: 'BAT' },
-  { id: 'SUSHI', name: 'SushiSwap', symbol: 'SUSHI' }, { id: 'ZIL', name: 'Zilliqa', symbol: 'ZIL' }
-];
+import { useEffect, useState, type CSSProperties } from 'react';
+
+const COINS = [
+  ['BTC', 'Bitcoin'],
+  ['ETH', 'Ethereum'],
+  ['SOL', 'Solana'],
+  ['XRP', 'Ripple'],
+  ['ADA', 'Cardano'],
+  ['DOGE', 'Dogecoin'],
+  ['BNB', 'Binance Coin'],
+  ['DOT', 'Polkadot'],
+  ['LINK', 'Chainlink'],
+  ['LTC', 'Litecoin'],
+  ['AVAX', 'Avalanche'],
+  ['MATIC', 'Polygon'],
+  ['TRX', 'TRON'],
+  ['UNI', 'Uniswap'],
+  ['XLM', 'Stellar'],
+  ['ATOM', 'Cosmos'],
+  ['XMR', 'Monero'],
+  ['ETC', 'Ethereum Classic'],
+  ['HBAR', 'Hedera'],
+  ['ICP', 'Internet Computer'],
+  ['FIL', 'Filecoin'],
+  ['APT', 'Aptos'],
+  ['ARB', 'Arbitrum'],
+  ['VET', 'VeChain'],
+  ['NEAR', 'NEAR Protocol'],
+  ['MKR', 'Maker'],
+  ['OP', 'Optimism'],
+  ['GRT', 'The Graph'],
+  ['THETA', 'Theta Network'],
+  ['FTM', 'Fantom'],
+  ['AAVE', 'Aave'],
+  ['ALGO', 'Algorand'],
+  ['SAND', 'The Sandbox'],
+  ['MANA', 'Decentraland'],
+  ['EOS', 'EOS'],
+  ['XTZ', 'Tezos'],
+  ['GALA', 'Gala'],
+  ['BAT', 'Basic Attention'],
+  ['SUSHI', 'SushiSwap'],
+  ['ZIL', 'Zilliqa'],
+] as const;
+const PRICE_URL = `https://min-api.cryptocompare.com/data/price?fsym=USD&tsyms=${COINS.map(([symbol]) => symbol).join(',')}`;
+const card: CSSProperties = { background: '#1e293b', border: '1px solid #334155', borderRadius: 20, padding: 'clamp(20px, 5vw, 32px)' };
+const label: CSSProperties = { display: 'block', color: '#cbd5e1', fontSize: 14, fontWeight: 600, marginBottom: 10 };
 
 export default function Home() {
-  const [amount, setAmount] = useState<string>('1');
-  const [fromCrypto, setFromCrypto] = useState<string>('BTC');
-  const [toCrypto, setToCrypto] = useState<string>('ETH');
-  const [result, setResult] = useState<string>('0.00');
+  const [amount, setAmount] = useState('1');
+  const [from, setFrom] = useState('BTC');
+  const [to, setTo] = useState('ETH');
   const [prices, setPrices] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const fetchPrices = async () => {
-    try {
-      const symbols = ASSET_MATRIX.map(c => c.id).join(',');
-      // Swapping out the multi-route chunking for a clean, direct, unblocked price API configuration path
-      const res = await fetch(`https://cryptocompare.com{symbols}`);
-      const data = await res.json();
-      
-      if (data && typeof data === 'object') {
-        const priceMap: Record<string, number> = {};
-        // Invert the USD rates mathematically so token-to-token cross conversion executes flawlessly inside browser states
-        Object.keys(data).forEach((key) => {
-          if (data[key] > 0) {
-            priceMap[key] = 1 / data[key];
-          }
-        });
-        setPrices(priceMap);
-        setLoading(false);
-      }
-    } catch (err) {
-      console.error('Error establishing clean pricing parameters:', err);
-    }
-  };
+  const [error, setError] = useState('');
+  const [updated, setUpdated] = useState<Date | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [focused, setFocused] = useState('');
 
   useEffect(() => {
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 30000);
-    return () => clearInterval(interval);
+    let disposed = false;
+    let active: AbortController | null = null;
+    async function refresh() {
+      if (active) return;
+      const controller = new AbortController();
+      active = controller;
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      try {
+        const response = await fetch(PRICE_URL, { signal: controller.signal, cache: 'no-store' });
+        if (!response.ok) throw new Error('Price service unavailable');
+        const data: unknown = await response.json();
+        if (!data || typeof data !== 'object' || ('Response' in data && data.Response === 'Error')) throw new Error('Invalid price response');
+        const next: Record<string, number> = {};
+        for (const [symbol] of COINS) {
+          const value = (data as Record<string, unknown>)[symbol];
+          // USD -> asset rates are inverted into USD prices for local cross conversion.
+          if (typeof value === 'number' && Number.isFinite(value) && value > 0 && Number.isFinite(1 / value)) next[symbol] = 1 / value;
+        }
+        if (Object.keys(next).length === 0) throw new Error('No valid rates');
+        if (!disposed) { setPrices(next); setUpdated(new Date()); setError(''); }
+      } catch {
+        if (!disposed) setError('Unable to refresh prices. The service may be unavailable or rate-limited. Retrying every 30 seconds.');
+      } finally {
+        clearTimeout(timeout);
+        active = null;
+        if (!disposed) setLoading(false);
+      }
+    }
+    void refresh();
+    const interval = setInterval(() => void refresh(), 30000);
+    return () => { disposed = true; clearInterval(interval); active?.abort(); };
   }, []);
 
-  useEffect(() => {
-    if (!prices[fromCrypto] || !prices[toCrypto]) return;
-    const calculated = (parseFloat(amount) * prices[fromCrypto]) / prices[toCrypto];
-    setResult(isNaN(calculated) ? '0.00' : calculated.toFixed(4));
-  }, [amount, fromCrypto, toCrypto, prices]);
+  const numericAmount = Number(amount);
+  const valid = amount.trim() !== '' && Number.isFinite(numericAmount) && numericAmount >= 0;
+  const calculated = valid && prices[from] && prices[to] ? numericAmount * (prices[from] / prices[to]) : null;
+  const result = calculated !== null && Number.isFinite(calculated) ? calculated : null;
+  const field = (id: string): CSSProperties => ({ width: '100%', minWidth: 0, padding: '14px 16px', borderRadius: 10, border: `1px solid ${focused === id ? '#38bdf8' : '#475569'}`, outline: focused === id ? '2px solid #38bdf8' : undefined, outlineOffset: 3, backgroundColor: '#0f172a', color: '#f1f5f9', fontSize: 16, transition: 'border-color 150ms', colorScheme: 'dark' });
 
   return (
-    <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: '#e2e8f0', fontFamily: 'sans-serif' }}>
-      <main style={{ maxWidth: '650px', margin: '0 auto', padding: '40px 16px', boxSizing: 'border-box' }}>
-        <header style={{ textAlign: 'center', marginBottom: '45px' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0 0 6px 0', color: '#fff', letterSpacing: '-0.025em' }}>Crypto Calc Grid</h1>
-          <p style={{ color: '#94a3b8', margin: 0, fontSize: '1.1rem' }}>Free Instant Real-Time Crypto Conversion Hub</p>
-        </header>
-
-        <section style={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '16px', padding: '28px', marginBottom: '30px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>Enter Amount to Convert</label>
-              <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', fontSize: '1.1rem', color: '#fff', boxSizing: 'border-box' }} />
+    <main style={{ maxWidth: 760, margin: '0 auto', padding: 'clamp(36px, 8vw, 80px) 20px', minHeight: '100vh' }}>
+      <header style={{ textAlign: 'center', marginBottom: 36 }}>
+        <p style={{ color: '#38bdf8', fontSize: 12, fontWeight: 700, letterSpacing: '0.18em' }}>40 ASSETS · ONE SIMPLE CONVERTER</p>
+        <h1 style={{ fontSize: 'clamp(30px, 6vw, 46px)', letterSpacing: '-0.04em', color: '#f8fafc', margin: '16px 0 12px' }}>Crypto Calc Grid</h1>
+        <p style={{ color: '#94a3b8', lineHeight: 1.6 }}>Live crypto conversions, without the clutter.</p>
+      </header>
+      <section aria-label="Conversion inputs" style={card}>
+        <label htmlFor="amount" style={label}>Amount to convert</label>
+        <input id="amount" type="number" min="0" step="any" inputMode="decimal" value={amount} onChange={event => setAmount(event.target.value)} onFocus={() => setFocused('amount')} onBlur={() => setFocused('')} aria-invalid={!valid} aria-describedby={!valid ? 'amount-error' : undefined} style={{ ...field('amount'), fontSize: 24 }} />
+        {!valid && <p id="amount-error" style={{ color: '#fda4af', fontSize: 14 }}>Enter a finite, non-negative amount.</p>}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 230px), 1fr))', gap: 20, marginTop: 28 }}>
+          {(['from', 'to'] as const).map(id => (
+            <div key={id}>
+              <label htmlFor={id} style={label}>{id === 'from' ? 'From asset' : 'To asset'}</label>
+              <select id={id} value={id === 'from' ? from : to} onChange={event => (id === 'from' ? setFrom : setTo)(event.target.value)} onFocus={() => setFocused(id)} onBlur={() => setFocused('')} style={field(id)}>
+                {COINS.map(([symbol, name]) => <option key={symbol} value={symbol}>{name} ({symbol})</option>)}
+              </select>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>From Asset</label>
-                <select value={fromCrypto} onChange={(e) => setFromCrypto(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', fontSize: '1rem', color: '#fff', cursor: 'pointer' }}>
-                  {ASSET_MATRIX.map((c) => ( <option key={c.id} value={c.id}>{c.name} ({c.symbol})</option> ))}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>To Asset</label>
-                <select value={toCrypto} onChange={(e) => setToCrypto(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', fontSize: '1rem', color: '#fff', cursor: 'pointer' }}>
-                  {ASSET_MATRIX.map((c) => ( <option key={c.id} value={c.id}>{c.name} ({c.symbol})</option> ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section style={{ border: '2px solid #38bdf8', borderRadius: '16px', padding: '24px', backgroundColor: '#0f172a', textAlign: 'center', boxShadow: '0 10px 15px -3px rgba(56, 189, 248, 0.1)' }}>
-          <h2 style={{ fontSize: '1.1rem', margin: '0 0 10px 0', color: '#94a3b8', fontWeight: '600' }}>Live Exchange Matrix</h2>
-          <div style={{ fontSize: '2.25rem', fontWeight: '800', color: '#38bdf8' }}>
-            {amount} {fromCrypto} = {loading ? '---' : result} {toCrypto}
-          </div>
-          <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '12px 0 0 0' }}>Token valuations update smoothly every 30 seconds.</p>
-        </section>
-      </main>
-    </div>
+          ))}
+        </div>
+      </section>
+      <section aria-label="Conversion result" style={{ ...card, marginTop: 24, border: '2px solid #38bdf8', background: '#0f172a', textAlign: 'center' }}>
+        <h2 style={{ color: '#94a3b8', fontSize: 14, fontWeight: 500, margin: '0 0 16px' }}>Conversion estimate{error && updated ? ' · last available prices' : ''}</h2>
+        <output aria-live="polite" style={{ display: 'block', color: '#38bdf8', fontSize: 'clamp(24px, 5vw, 36px)', fontWeight: 750, overflowWrap: 'anywhere' }}>
+          {result !== null ? `${numericAmount.toLocaleString('en-US', { maximumSignificantDigits: 12 })} ${from} = ${result.toLocaleString('en-US', { maximumSignificantDigits: 10 })} ${to}` : loading ? 'Loading live prices…' : !valid ? 'Enter a valid amount' : 'Selected asset prices unavailable'}
+        </output>
+        <p style={{ color: '#94a3b8', fontSize: 13, margin: '20px 0 0', lineHeight: 1.6 }}>Updates every 30 seconds{updated ? ` · Last updated ${updated.toLocaleTimeString()}` : ''}</p>
+        {error && <p role="alert" style={{ color: '#fcd34d', fontSize: 14, lineHeight: 1.6 }}>{error}</p>}
+      </section>
+      <footer style={{ textAlign: 'center', color: '#94a3b8', fontSize: 12, lineHeight: 1.8, marginTop: 24 }}>Market data from CryptoCompare. Estimates exclude trading fees.<br />For information only, not financial advice.</footer>
+    </main>
   );
 }
