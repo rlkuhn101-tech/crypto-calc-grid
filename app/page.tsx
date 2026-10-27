@@ -1,6 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+// Force link your mobile-optimized styles directly into the document header matrix
+import './globals.css';
+
 const ASSET_MATRIX = [
   { id: 'BTC', name: 'Bitcoin', symbol: 'BTC' },
   { id: 'ETH', name: 'Ethereum', symbol: 'ETH' },
@@ -24,7 +27,6 @@ export default function Home() {
 
   const fetchPrices = async () => {
     try {
-      // Clean, verified data stream mapping parameters directly to standard unblocked tickers
       const res = await fetch('https://cryptocompare.com');
       const data = await res.json();
       
@@ -55,7 +57,6 @@ export default function Home() {
     const toPriceUsd = prices[toCrypto];
     const calculated = (parseFloat(amount) * fromPriceUsd) / toPriceUsd;
     
-    // Automatically scale decimal precision so low-fraction calculations never round down to zero
     if (calculated === 0) {
       setResult('0.00');
     } else if (calculated < 0.01) {
