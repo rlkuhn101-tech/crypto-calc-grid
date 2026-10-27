@@ -2,35 +2,56 @@
 
 import React, { useState, useEffect } from 'react';
 
+// Hardcoded top 10 high-demand cryptocurrency assets to guarantee instant loading metrics
+const TOP_COINS = [
+  { id: 'BTC', name: 'Bitcoin', symbol: 'BTC' },
+  { id: 'ETH', name: 'Ethereum', symbol: 'ETH' },
+  { id: 'SOL', name: 'Solana', symbol: 'SOL' },
+  { id: 'XRP', name: 'Ripple', symbol: 'XRP' },
+  { id: 'ADA', name: 'Cardano', symbol: 'ADA' },
+  { id: 'DOGE', name: 'Dogecoin', symbol: 'DOGE' },
+  { id: 'BNB', name: 'Binance Coin', symbol: 'BNB' },
+  { id: 'DOT', name: 'Polkadot', symbol: 'DOT' },
+  { id: 'LINK', name: 'Chainlink', symbol: 'LINK' },
+  { id: 'LTC', name: 'Litecoin', symbol: 'LTC' }
+];
+
 export default function Home() {
-  const [cryptoList, setCryptoList] = useState<any[]>([]);
   const [amount, setAmount] = useState<string>('1');
-  const [fromCrypto, setFromCrypto] = useState<string>('bitcoin');
-  const [toCrypto, setToCrypto] = useState<string>('ethereum');
+  const [fromCrypto, setFromCrypto] = useState<string>('BTC');
+  const [toCrypto, setToCrypto] = useState<string>('ETH');
   const [result, setResult] = useState<string>('0.00');
+  const [prices, setPrices] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch top 100 Cryptocurrencies (CoinGecko API)
+  // Fetch robust multi-asset conversions directly via CryptoCompare public endpoints
   const fetchPrices = async () => {
     try {
       const res = await fetch(
-        'https://coingecko.com'
+        'https://cryptocompare.com'
       );
       const data = await res.json();
-      if (Array.isArray(data)) {
-        setCryptoList(data);
+      
+      const priceMap: Record<string, number> = {};
+      if (data && typeof data === 'object') {
+        Object.keys(data).forEach((key) => {
+          if (data[key] && data[key].USD) {
+            priceMap[key] = data[key].USD;
+          }
+        });
       }
+      
+      setPrices(priceMap);
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching crypto data:', err);
+      console.error('Error fetching global crypto valuation feeds:', err);
     }
   };
 
-  // Run initial fetch on mount
   useEffect(() => {
     fetchPrices();
     
-    // Slower refresh rate (Every 30 seconds) to avoid distracting flashing updates
+    // Smooth 30-second loop intervals to prevent flashing metrics while guarding API limits
     const interval = setInterval(() => {
       fetchPrices();
     }, 30000);
@@ -38,20 +59,16 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Calculate Conversion Rate locally when inputs change
+  // Compute clean dual-column currency cross-conversions directly in browser memories
   useEffect(() => {
-    if (cryptoList.length === 0) return;
+    if (!prices[fromCrypto] || !prices[toCrypto]) return;
 
-    const fromCoin = cryptoList.find((c) => c.id === fromCrypto);
-    const toCoin = cryptoList.find((c) => c.id === toCrypto);
-
-    if (fromCoin && toCoin) {
-      const fromPriceUsd = fromCoin.current_price;
-      const toPriceUsd = toCoin.current_price;
-      const calculated = (parseFloat(amount) * fromPriceUsd) / toPriceUsd;
-      setResult(isNaN(calculated) ? '0.00' : calculated.toFixed(4));
-    }
-  }, [amount, fromCrypto, toCrypto, cryptoList]);
+    const fromPriceUsd = prices[fromCrypto];
+    const toPriceUsd = prices[toCrypto];
+    const calculated = (parseFloat(amount) * fromPriceUsd) / toPriceUsd;
+    
+    setResult(isNaN(calculated) ? '0.00' : calculated.toFixed(4));
+  }, [amount, fromCrypto, toCrypto, prices]);
 
   return (
     <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', width: '100%' }}>
@@ -63,7 +80,7 @@ export default function Home() {
         color: '#e2e8f0',
         boxSizing: 'border-box'
       }}>
-        {/* Header Block */}
+        {/* Header Block Layout */}
         <header style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h1 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0 0 6px 0', color: '#fff', letterSpacing: '-0.025em' }}>
             Crypto Calc Grid
@@ -73,21 +90,21 @@ export default function Home() {
           </p>
         </header>
 
-        {/* Dual-Column Interactive Panel */}
+        {/* Dual Column Input Framework Module */}
         <section style={{
           backgroundColor: '#1e293b',
           border: '1px solid #334155',
           borderRadius: '16px',
-          padding: '28px',
+          padding: '24px',
           marginBottom: '30px',
           boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
         }}>
           {loading ? (
-            <p style={{ textAlign: 'center', color: '#94a3b8' }}>Loading live pricing metrics...</p>
+            <p style={{ textAlign: 'center', color: '#94a3b8' }}>Establishing network exchange endpoints...</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              {/* Input Value Field */}
+              {/* Quantifiable Amount Selector box */}
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>
                   Enter Amount to Convert
@@ -100,9 +117,9 @@ export default function Home() {
                 />
               </div>
 
-              {/* Dual Layout Selection Grid */}
+              {/* Hub Spoke Split Layout Structure */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                {/* Column 1: From Crypto */}
+                {/* Side A Selector */}
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>
                     From Asset
@@ -112,15 +129,15 @@ export default function Home() {
                     onChange={(e) => setFromCrypto(e.target.value)}
                     style={{ width: '100%', padding: '12px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', fontSize: '1rem', color: '#fff', cursor: 'pointer' }}
                   >
-                    {cryptoList.map((coin) => (
+                    {TOP_COINS.map((coin) => (
                       <option key={coin.id} value={coin.id}>
-                        {coin.name} ({coin.symbol.toUpperCase()})
+                        {coin.name} ({coin.symbol})
                       </option>
                     ))}
                   </select>
                 </div>
 
-                {/* Column 2: To Crypto */}
+                {/* Side B Selector */}
                 <div>
                   <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>
                     To Asset
@@ -130,9 +147,9 @@ export default function Home() {
                     onChange={(e) => setToCrypto(e.target.value)}
                     style={{ width: '100%', padding: '12px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', fontSize: '1rem', color: '#fff', cursor: 'pointer' }}
                   >
-                    {cryptoList.map((coin) => (
+                    {TOP_COINS.map((coin) => (
                       <option key={coin.id} value={coin.id}>
-                        {coin.name} ({coin.symbol.toUpperCase()})
+                        {coin.name} ({coin.symbol})
                       </option>
                     ))}
                   </select>
@@ -143,7 +160,7 @@ export default function Home() {
           )}
         </section>
 
-        {/* Live Estimation Output Panel */}
+        {/* Real-time Dynamic Exchange Metrics Box Layout */}
         <section style={{
           border: '2px solid #38bdf8',
           borderRadius: '16px',
@@ -153,17 +170,16 @@ export default function Home() {
           textAlign: 'center'
         }}>
           <h2 style={{ fontSize: '1.1rem', margin: '0 0 10px 0', fontWeight: '600', color: '#94a3b8' }}>
-            Live Value Exchange Estimation
+            Live Exchange Yield Matrix
           </h2>
           <div style={{ fontSize: '2.25rem', fontWeight: '800', color: '#38bdf8' }}>
-            {amount} {cryptoList.find(c => c.id === fromCrypto)?.symbol.toUpperCase() || ''} = {result} {cryptoList.find(c => c.id === toCrypto)?.symbol.toUpperCase() || ''}
+            {amount} {fromCrypto} = {result} {toCrypto}
           </div>
           <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '12px 0 0 0' }}>
-            Pricing updates automatically every 30 seconds.
+            Token valuations update smoothly every 30 seconds.
           </p>
         </section>
       </main>
     </div>
   );
 }
-
