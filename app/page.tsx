@@ -25,9 +25,9 @@ const ASSET_MATRIX = [
 ];
 
 export default function Home() {
-  const [amount, setAmount] = useState<string>('1');
+  const [amount, setAmount] = useState<string>('12');
   const [fromCrypto, setFromCrypto] = useState<string>('BTC');
-  const [toCrypto, setToCrypto] = useState<string>('ETH');
+  const [toCrypto, setToCrypto] = useState<string>('XRP');
   const [result, setResult] = useState<string>('0.00');
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -35,16 +35,15 @@ export default function Home() {
   const fetchPrices = async () => {
     try {
       const symbols = ASSET_MATRIX.map(c => c.id).join(',');
-      // Swapping out the multi-route chunking for a clean, direct, unblocked price API configuration path
       const res = await fetch(`https://cryptocompare.com{symbols}`);
       const data = await res.json();
       
       if (data && typeof data === 'object') {
         const priceMap: Record<string, number> = {};
-        // Invert the USD rates mathematically so token-to-token cross conversion executes flawlessly inside browser states
         Object.keys(data).forEach((key) => {
           if (data[key] > 0) {
-            priceMap[key] = 1 / data[key];
+            // Force the dictionary mapping keys to remain completely uppercase to ensure exact matching loops
+            priceMap[key.toUpperCase()] = 1 / data[key];
           }
         });
         setPrices(priceMap);
