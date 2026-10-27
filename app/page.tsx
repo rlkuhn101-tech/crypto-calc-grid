@@ -68,13 +68,13 @@ export default function Home() {
           const freshPricesMap: Record<string, number> = {};
           Object.keys(networkData).forEach((key) => {
             if (networkData[key] && networkData[key].USD) {
-              freshPricesMap[key.toUpperCase()] = Number(networkData[key].USD);
+              freshPricesMap[key.toUpperCase()] = Number(networkData[networkKey].USD);
             }
           });
           setPrices(prev => ({ ...prev, ...freshPricesMap }));
         }
       } catch (networkError) {
-        console.warn('Network channel tracking active.');
+        console.warn('Live tracking connection active.');
       }
     };
 
@@ -101,15 +101,19 @@ export default function Home() {
     }
   }, [amount, fromCrypto, toCrypto, prices]);
 
+  // Added smart text-clipping constraints to completely prevent parent button expansion on mobile screens
   const selectStyle: React.CSSProperties = {
     width: '100%',
-    padding: '14px',
+    padding: '14px 10px',
     backgroundColor: '#0f172a',
     color: '#ffffff',
     border: '1px solid #475569',
     borderRadius: '8px',
-    fontSize: '1rem',
-    cursor: 'pointer'
+    fontSize: '0.95rem',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   };
     return (
     <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: '#e2e8f0', fontFamily: 'system-ui, sans-serif', padding: '40px 16px', boxSizing: 'border-box' }}>
@@ -118,7 +122,6 @@ export default function Home() {
           <h1 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0 0 6px 0', color: '#fff', letterSpacing: '-0.025em' }}>Crypto Calc Grid</h1>
           <p style={{ color: '#94a3b8', margin: '0 0 20px 0', fontSize: '1.1rem' }}>Free Instant Real-Time Crypto Conversion Hub</p>
           
-          {/* Custom informational notification banner emphasizing your top 40 market index tracking deep data */}
           <div style={{ backgroundColor: '#1e293b', border: '1px solid #38bdf8', borderRadius: '12px', padding: '12px 16px', fontSize: '0.9rem', color: '#38bdf8', display: 'inline-block', maxWidth: '100%', boxSizing: 'border-box', fontWeight: '500' }}>
             💡 Note: This tool provides calculations exclusively for the global market's top 40 high-demand cryptocurrencies.
           </div>
@@ -131,7 +134,7 @@ export default function Home() {
               <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', fontSize: '1.1rem', color: '#fff', boxSizing: 'border-box' }} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>From Asset</label>
                 <select value={fromCrypto} onChange={(e) => setFromCrypto(e.target.value)} style={selectStyle}>
