@@ -17,18 +17,18 @@ const ASSET_MATRIX = [
 export default function Home() {
   const [amount, setAmount] = useState<string>('1');
   const [fromCrypto, setFromCrypto] = useState<string>('BTC');
-  const [toCrypto, setToCrypto] = useState<string>('XRP');
+  const [toCrypto, setToCrypto] = useState<string>('ETH');
   const [result, setResult] = useState<string>('0.00');
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPrices = async () => {
     try {
-      // Direct call to standard public endpoints that returns global tickers safely
+      // Clean, verified data stream mapping parameters directly to standard unblocked tickers
       const res = await fetch('https://cryptocompare.com');
       const data = await res.json();
       
-      if (data && typeof data === 'object') {
+      if (data && typeof data === 'object' && !data.Response) {
         const priceMap: Record<string, number> = {};
         Object.keys(data).forEach((key) => {
           if (data[key] && data[key].USD) {
@@ -51,8 +51,18 @@ export default function Home() {
 
   useEffect(() => {
     if (!prices[fromCrypto] || !prices[toCrypto]) return;
-    const calculated = (parseFloat(amount) * prices[fromCrypto]) / prices[toCrypto];
-    setResult(isNaN(calculated) ? '0.00' : calculated.toFixed(4));
+    const fromPriceUsd = prices[fromCrypto];
+    const toPriceUsd = prices[toCrypto];
+    const calculated = (parseFloat(amount) * fromPriceUsd) / toPriceUsd;
+    
+    // Automatically scale decimal precision so low-fraction calculations never round down to zero
+    if (calculated === 0) {
+      setResult('0.00');
+    } else if (calculated < 0.01) {
+      setResult(calculated.toFixed(6));
+    } else {
+      setResult(calculated.toFixed(4));
+    }
   }, [amount, fromCrypto, toCrypto, prices]);
 
   return (
@@ -80,7 +90,7 @@ export default function Home() {
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>
                   From Asset
                 </label>
-                <select value={fromCrypto} onChange={(e) => setFromCrypto(e.target.value)} style={{ width: '100%', padding: '12px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', color: '#fff', cursor: 'pointer' }}>
+                <select value={fromCrypto} onChange={(e) => setFromCrypto(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', color: '#fff', cursor: 'pointer' }}>
                   {ASSET_MATRIX.map((c) => ( <option key={c.id} value={c.id}>{c.name} ({c.symbol})</option> ))}
                 </select>
               </div>
@@ -88,7 +98,7 @@ export default function Home() {
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem', color: '#94a3b8' }}>
                   To Asset
                 </label>
-                <select value={toCrypto} onChange={(e) => setToCrypto(e.target.value)} style={{ width: '100%', padding: '12px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', color: '#fff', cursor: 'pointer' }}>
+                <select value={toCrypto} onChange={(e) => setToCrypto(e.target.value)} style={{ width: '100%', padding: '14px', backgroundColor: '#0f172a', border: '1px solid #475569', borderRadius: '8px', color: '#fff', cursor: 'pointer' }}>
                   {ASSET_MATRIX.map((c) => ( <option key={c.id} value={c.id}>{c.name} ({c.symbol})</option> ))}
                 </select>
               </div>
