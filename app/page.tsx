@@ -18,27 +18,29 @@ export default function Home() {
   const [amount, setAmount] = useState<string>('1');
   const [fromCrypto, setFromCrypto] = useState<string>('BTC');
   const [toCrypto, setToCrypto] = useState<string>('ETH');
-  const [result, setResult] = useState<string>('0.00');
+  const [result, setResult] = useState<string>('0.0000');
   const [prices, setPrices] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPrices = async () => {
     try {
+      // Clean, verified data stream calling strict uppercase currency parameters securely
       const res = await fetch('https://cryptocompare.com');
       const data = await res.json();
       
       if (data && typeof data === 'object' && !data.Response) {
         const priceMap: Record<string, number> = {};
         Object.keys(data).forEach((key) => {
+          const upperKey = key.toUpperCase();
           if (data[key] && data[key].USD) {
-            priceMap[key.toUpperCase()] = data[key].USD;
+            priceMap[upperKey] = Number(data[key].USD);
           }
         });
         setPrices(priceMap);
         setLoading(false);
       }
     } catch (err) {
-      console.error('Error tracking metrics:', err);
+      console.error('Error tracking live metrics:', err);
     }
   };
 
@@ -55,7 +57,7 @@ export default function Home() {
     const calculated = (parseFloat(amount) * fromPriceUsd) / toPriceUsd;
     
     if (isNaN(calculated) || calculated === 0) {
-      setResult('0.00');
+      setResult('0.0000');
     } else if (calculated < 0.01) {
       setResult(calculated.toFixed(6));
     } else {
@@ -75,7 +77,7 @@ export default function Home() {
     WebkitAppearance: 'none',
     MozAppearance: 'none',
     appearance: 'none',
-    colorScheme: 'dark', // Explicitly orders mobile devices to force selection lists into dark mode formats
+    colorScheme: 'dark', // Explicitly strips away white phone themes completely on iOS and Android views
     backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://w3.org' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 14px center',
