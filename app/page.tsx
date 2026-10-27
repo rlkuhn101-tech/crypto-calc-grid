@@ -1,48 +1,47 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
-// Full 40-crypto mapping matrix utilizing case-insensitive CoinGecko API parameters
 const ASSET_MATRIX = [
-  { id: 'BTC', name: 'Bitcoin', symbol: 'BTC', geckoId: 'bitcoin' },
-  { id: 'ETH', name: 'Ethereum', symbol: 'ETH', geckoId: 'ethereum' },
-  { id: 'SOL', name: 'Solana', symbol: 'SOL', geckoId: 'solana' },
-  { id: 'XRP', name: 'Ripple', symbol: 'XRP', geckoId: 'ripple' },
-  { id: 'ADA', name: 'Cardano', symbol: 'ADA', geckoId: 'cardano' },
-  { id: 'DOGE', name: 'Dogecoin', symbol: 'DOGE', geckoId: 'dogecoin' },
-  { id: 'BNB', name: 'Binance Coin', symbol: 'BNB', geckoId: 'binancecoin' },
-  { id: 'DOT', name: 'Polkadot', symbol: 'DOT', geckoId: 'polkadot' },
-  { id: 'LINK', name: 'Chainlink', symbol: 'LINK', geckoId: 'chainlink' },
-  { id: 'LTC', name: 'Litecoin', symbol: 'LTC', geckoId: 'litecoin' },
-  { id: 'AVAX', name: 'Avalanche', symbol: 'AVAX', geckoId: 'avalanche-2' },
-  { id: 'MATIC', name: 'Polygon', symbol: 'MATIC', geckoId: 'polygon' },
-  { id: 'TRX', name: 'TRON', symbol: 'TRX', geckoId: 'tron' },
-  { id: 'UNI', name: 'Uniswap', symbol: 'UNI', geckoId: 'uniswap' },
-  { id: 'XLM', name: 'Stellar', symbol: 'XLM', geckoId: 'stellar' },
-  { id: 'ATOM', name: 'Cosmos', symbol: 'ATOM', geckoId: 'cosmos' },
-  { id: 'XMR', name: 'Monero', symbol: 'XMR', geckoId: 'monero' },
-  { id: 'ETC', name: 'Ethereum Classic', symbol: 'ETC', geckoId: 'ethereum-classic' },
-  { id: 'HBAR', name: 'Hedera', symbol: 'HBAR', geckoId: 'hedera-hashgraph' },
-  { id: 'ICP', name: 'Internet Computer', symbol: 'ICP', geckoId: 'internet-computer' },
-  { id: 'FIL', name: 'Filecoin', symbol: 'FIL', geckoId: 'filecoin' },
-  { id: 'APT', name: 'Aptos', symbol: 'APT', geckoId: 'aptos' },
-  { id: 'ARB', name: 'Arbitrum', symbol: 'ARB', geckoId: 'arbitrum' },
-  { id: 'VET', name: 'VeChain', symbol: 'VET', geckoId: 'vechain' },
-  { id: 'NEAR', name: 'NEAR Protocol', symbol: 'NEAR', geckoId: 'near' },
-  { id: 'MKR', name: 'Maker', symbol: 'MKR', geckoId: 'maker' },
-  { id: 'OP', name: 'Optimism', symbol: 'OP', geckoId: 'optimism' },
-  { id: 'GRT', name: 'The Graph', symbol: 'GRT', geckoId: 'the-graph' },
-  { id: 'THETA', name: 'Theta Network', symbol: 'THETA', geckoId: 'theta-token' },
-  { id: 'FTM', name: 'Fantom', symbol: 'FTM', geckoId: 'fantom' },
-  { id: 'AAVE', name: 'Aave', symbol: 'AAVE', geckoId: 'aave' },
-  { id: 'ALGO', name: 'Algorand', symbol: 'ALGO', geckoId: 'algorand' },
-  { id: 'SAND', name: 'The Sandbox', symbol: 'SAND', geckoId: 'the-sandbox' },
-  { id: 'MANA', name: 'Decentraland', symbol: 'MANA', geckoId: 'decentraland' },
-  { id: 'EOS', name: 'EOS', symbol: 'EOS', geckoId: 'eos' },
-  { id: 'XTZ', name: 'Tezos', symbol: 'XTZ', geckoId: 'tezos' },
-  { id: 'GALA', name: 'Gala', symbol: 'GALA', geckoId: 'gala' },
-  { id: 'BAT', name: 'Basic Attention', symbol: 'BAT', geckoId: 'basic-attention-token' },
-  { id: 'SUSHI', name: 'SushiSwap', symbol: 'SUSHI', geckoId: 'sushiswap' },
-  { id: 'ZIL', name: 'Zilliqa', symbol: 'ZIL', geckoId: 'zilliqa' }
+  { id: 'BTC', name: 'Bitcoin', symbol: 'BTC' },
+  { id: 'ETH', name: 'Ethereum', symbol: 'ETH' },
+  { id: 'SOL', name: 'Solana', symbol: 'SOL' },
+  { id: 'XRP', name: 'Ripple', symbol: 'XRP' },
+  { id: 'ADA', name: 'Cardano', symbol: 'ADA' },
+  { id: 'DOGE', name: 'Dogecoin', symbol: 'DOGE' },
+  { id: 'BNB', name: 'Binance Coin', symbol: 'BNB' },
+  { id: 'DOT', name: 'Polkadot', symbol: 'DOT' },
+  { id: 'LINK', name: 'Chainlink', symbol: 'LINK' },
+  { id: 'LTC', name: 'Litecoin', symbol: 'LTC' },
+  { id: 'AVAX', name: 'Avalanche', symbol: 'AVAX' },
+  { id: 'MATIC', name: 'Polygon', symbol: 'MATIC' },
+  { id: 'TRX', name: 'TRON', symbol: 'TRX' },
+  { id: 'UNI', name: 'Uniswap', symbol: 'UNI' },
+  { id: 'XLM', name: 'Stellar', symbol: 'XLM' },
+  { id: 'ATOM', name: 'Cosmos', symbol: 'ATOM' },
+  { id: 'XMR', name: 'Monero', symbol: 'XMR' },
+  { id: 'ETC', name: 'Ethereum Classic', symbol: 'ETC' },
+  { id: 'HBAR', name: 'Hedera', symbol: 'HBAR' },
+  { id: 'ICP', name: 'Internet Computer', symbol: 'ICP' },
+  { id: 'FIL', name: 'Filecoin', symbol: 'FIL' },
+  { id: 'APT', name: 'Aptos', symbol: 'APT' },
+  { id: 'ARB', name: 'Arbitrum', symbol: 'ARB' },
+  { id: 'VET', name: 'VeChain', symbol: 'VET' },
+  { id: 'NEAR', name: 'NEAR Protocol', symbol: 'NEAR' },
+  { id: 'MKR', name: 'Maker', symbol: 'MKR' },
+  { id: 'OP', name: 'Optimism', symbol: 'OP' },
+  { id: 'GRT', name: 'The Graph', symbol: 'GRT' },
+  { id: 'THETA', name: 'Theta Network', symbol: 'THETA' },
+  { id: 'FTM', name: 'Fantom', symbol: 'FTM' },
+  { id: 'AAVE', name: 'Aave', symbol: 'AAVE' },
+  { id: 'ALGO', name: 'Algorand', symbol: 'ALGO' },
+  { id: 'SAND', name: 'The Sandbox', symbol: 'SAND' },
+  { id: 'MANA', name: 'Decentraland', symbol: 'MANA' },
+  { id: 'EOS', name: 'EOS', symbol: 'EOS' },
+  { id: 'XTZ', name: 'Tezos', symbol: 'XTZ' },
+  { id: 'GALA', name: 'Gala', symbol: 'GALA' },
+  { id: 'BAT', name: 'Basic Attention', symbol: 'BAT' },
+  { id: 'SUSHI', name: 'SushiSwap', symbol: 'SUSHI' },
+  { id: 'ZIL', name: 'Zilliqa', symbol: 'ZIL' }
 ];
 
 export default function Home() {
@@ -55,28 +54,30 @@ export default function Home() {
 
   const fetchPrices = async () => {
     try {
-      const ids = ASSET_MATRIX.map(c => c.geckoId).join(',');
-      const res = await fetch(`https://coingecko.com{ids}&vs_currencies=usd`);
+      const symbols = ASSET_MATRIX.map(c => c.id).join(',');
+      // Fully open, direct single-file request endpoint that completely bypasses browser CORS block restrictions
+      const res = await fetch(`https://cryptocompare.com{symbols}`);
       const data = await res.json();
       
-      if (data && typeof data === 'object') {
+      if (data && typeof data === 'object' && !data.Response) {
         const priceMap: Record<string, number> = {};
-        ASSET_MATRIX.forEach((coin) => {
-          if (data[coin.geckoId] && data[coin.geckoId].usd) {
-            priceMap[coin.id] = Number(data[coin.geckoId].usd);
+        Object.keys(data).forEach((key) => {
+          if (data[key] > 0) {
+            // Mathematically invert the USD value locally so your coin-to-coin math remains case-insensitive and lightning-fast
+            priceMap[key.toUpperCase()] = 1 / Number(data[key]);
           }
         });
         setPrices(priceMap);
         setLoading(false);
       }
     } catch (err) {
-      console.error('Error tracking live metrics:', err);
+      console.error('Error tracking live tokens:', err);
     }
   };
 
   useEffect(() => {
     fetchPrices();
-    const interval = setInterval(fetchPrices, 60000);
+    const interval = setInterval(fetchPrices, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -105,7 +106,8 @@ export default function Home() {
     fontSize: '1rem',
     cursor: 'pointer'
   };
-    return (
+
+  return (
     <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: '#e2e8f0', fontFamily: 'system-ui, sans-serif', padding: '40px 16px', boxSizing: 'border-box' }}>
       <main style={{ maxWidth: '600px', margin: '0 auto' }}>
         <header style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -142,10 +144,9 @@ export default function Home() {
           <div style={{ fontSize: '2.25rem', fontWeight: '800', color: '#38bdf8' }}>
             {amount} {fromCrypto} = {loading ? '---' : result} {toCrypto}
           </div>
-          <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '12px 0 0 0' }}>Token valuations update smoothly every 60 seconds.</p>
+          <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '12px 0 0 0' }}>Token valuations update smoothly every 30 seconds.</p>
         </section>
       </main>
     </div>
   );
 }
-
