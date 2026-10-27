@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 
+// Full 40-crypto mapping matrix utilizing case-insensitive CoinGecko API parameters
 const ASSET_MATRIX = [
   { id: 'BTC', name: 'Bitcoin', symbol: 'BTC', geckoId: 'bitcoin' },
   { id: 'ETH', name: 'Ethereum', symbol: 'ETH', geckoId: 'ethereum' },
@@ -11,7 +12,37 @@ const ASSET_MATRIX = [
   { id: 'BNB', name: 'Binance Coin', symbol: 'BNB', geckoId: 'binancecoin' },
   { id: 'DOT', name: 'Polkadot', symbol: 'DOT', geckoId: 'polkadot' },
   { id: 'LINK', name: 'Chainlink', symbol: 'LINK', geckoId: 'chainlink' },
-  { id: 'LTC', name: 'Litecoin', symbol: 'LTC', geckoId: 'litecoin' }
+  { id: 'LTC', name: 'Litecoin', symbol: 'LTC', geckoId: 'litecoin' },
+  { id: 'AVAX', name: 'Avalanche', symbol: 'AVAX', geckoId: 'avalanche-2' },
+  { id: 'MATIC', name: 'Polygon', symbol: 'MATIC', geckoId: 'polygon' },
+  { id: 'TRX', name: 'TRON', symbol: 'TRX', geckoId: 'tron' },
+  { id: 'UNI', name: 'Uniswap', symbol: 'UNI', geckoId: 'uniswap' },
+  { id: 'XLM', name: 'Stellar', symbol: 'XLM', geckoId: 'stellar' },
+  { id: 'ATOM', name: 'Cosmos', symbol: 'ATOM', geckoId: 'cosmos' },
+  { id: 'XMR', name: 'Monero', symbol: 'XMR', geckoId: 'monero' },
+  { id: 'ETC', name: 'Ethereum Classic', symbol: 'ETC', geckoId: 'ethereum-classic' },
+  { id: 'HBAR', name: 'Hedera', symbol: 'HBAR', geckoId: 'hedera-hashgraph' },
+  { id: 'ICP', name: 'Internet Computer', symbol: 'ICP', geckoId: 'internet-computer' },
+  { id: 'FIL', name: 'Filecoin', symbol: 'FIL', geckoId: 'filecoin' },
+  { id: 'APT', name: 'Aptos', symbol: 'APT', geckoId: 'aptos' },
+  { id: 'ARB', name: 'Arbitrum', symbol: 'ARB', geckoId: 'arbitrum' },
+  { id: 'VET', name: 'VeChain', symbol: 'VET', geckoId: 'vechain' },
+  { id: 'NEAR', name: 'NEAR Protocol', symbol: 'NEAR', geckoId: 'near' },
+  { id: 'MKR', name: 'Maker', symbol: 'MKR', geckoId: 'maker' },
+  { id: 'OP', name: 'Optimism', symbol: 'OP', geckoId: 'optimism' },
+  { id: 'GRT', name: 'The Graph', symbol: 'GRT', geckoId: 'the-graph' },
+  { id: 'THETA', name: 'Theta Network', symbol: 'THETA', geckoId: 'theta-token' },
+  { id: 'FTM', name: 'Fantom', symbol: 'FTM', geckoId: 'fantom' },
+  { id: 'AAVE', name: 'Aave', symbol: 'AAVE', geckoId: 'aave' },
+  { id: 'ALGO', name: 'Algorand', symbol: 'ALGO', geckoId: 'algorand' },
+  { id: 'SAND', name: 'The Sandbox', symbol: 'SAND', geckoId: 'the-sandbox' },
+  { id: 'MANA', name: 'Decentraland', symbol: 'MANA', geckoId: 'decentraland' },
+  { id: 'EOS', name: 'EOS', symbol: 'EOS', geckoId: 'eos' },
+  { id: 'XTZ', name: 'Tezos', symbol: 'XTZ', geckoId: 'tezos' },
+  { id: 'GALA', name: 'Gala', symbol: 'GALA', geckoId: 'gala' },
+  { id: 'BAT', name: 'Basic Attention', symbol: 'BAT', geckoId: 'basic-attention-token' },
+  { id: 'SUSHI', name: 'SushiSwap', symbol: 'SUSHI', geckoId: 'sushiswap' },
+  { id: 'ZIL', name: 'Zilliqa', symbol: 'ZIL', geckoId: 'zilliqa' }
 ];
 
 export default function Home() {
@@ -24,7 +55,6 @@ export default function Home() {
 
   const fetchPrices = async () => {
     try {
-      // Unrestricted, unblocked public CoinGecko network endpoint that completely bypasses IP blacklists
       const ids = ASSET_MATRIX.map(c => c.geckoId).join(',');
       const res = await fetch(`https://coingecko.com{ids}&vs_currencies=usd`);
       const data = await res.json();
@@ -46,7 +76,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchPrices();
-    const interval = setInterval(fetchPrices, 30000);
+    const interval = setInterval(fetchPrices, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -73,18 +103,9 @@ export default function Home() {
     border: '1px solid #475569',
     borderRadius: '8px',
     fontSize: '1rem',
-    cursor: 'pointer',
-    WebkitAppearance: 'none',
-    MozAppearance: 'none',
-    appearance: 'none',
-    colorScheme: 'dark', // Native override forcing mobile browsers to render pitch-black option panels
-    backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://w3.org' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right 14px center',
-    backgroundSize: '16px'
+    cursor: 'pointer'
   };
-
-  return (
+    return (
     <div style={{ backgroundColor: '#0f172a', minHeight: '100vh', color: '#e2e8f0', fontFamily: 'system-ui, sans-serif', padding: '40px 16px', boxSizing: 'border-box' }}>
       <main style={{ maxWidth: '600px', margin: '0 auto' }}>
         <header style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -121,9 +142,10 @@ export default function Home() {
           <div style={{ fontSize: '2.25rem', fontWeight: '800', color: '#38bdf8' }}>
             {amount} {fromCrypto} = {loading ? '---' : result} {toCrypto}
           </div>
-          <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '12px 0 0 0' }}>Token valuations update smoothly every 30 seconds.</p>
+          <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '12px 0 0 0' }}>Token valuations update smoothly every 60 seconds.</p>
         </section>
       </main>
     </div>
   );
 }
+
