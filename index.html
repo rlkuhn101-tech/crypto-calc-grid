@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Calc Grid | High-Traffic Strategic Financial Utilities</title>
+    <meta name="description" content="Calculate future portfolio growth using our automated Dollar-Cost Averaging (DCA) planner, fractional token matrices, and structural asset tracking matrices.">
+    <style>
+        :root {
+            --bg-main: #0d091a;
+            --bg-card: #150f29;
+            --bg-input: #1f163d;
+            --accent: #8b5cf6;
+            --accent-hover: #a78bfa;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #2d224e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        header { width: 100%; max-width: 1200px; margin-bottom: 30px; text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
+        header h1 { color: var(--accent); font-size: 2.5rem; margin-bottom: 5px; font-weight: 700; letter-spacing: -0.5px; }
+        header p { color: var(--text-muted); font-size: 1.1rem; }
+        .main-container { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; width: 100%; max-width: 1200px; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .card-title { font-size: 1.3rem; margin-bottom: 8px; color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card-description { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4; }
+        label { display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+        .input-group { margin-bottom: 16px; }
+        input, select { width: 100%; background-color: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; padding: 12px; color: #fff; font-size: 1rem; transition: border 0.2s; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); }
+        .grid-outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+        .stat-box { background: var(--bg-input); border: 1px solid var(--border); padding: 16px; border-radius: 8px; text-align: center; }
+        .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+        /* Matrix Styles */
+        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.95rem; }
+        .matrix-table th { text-align: left; padding: 10px; color: var(--text-muted); border-bottom: 2px solid var(--border); font-size: 0.85rem; text-transform: uppercase; }
+        .matrix-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); }
+        /* Calculator Widget */
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-screen { grid-column: span 4; background-color: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; padding: 16px; text-align: right; font-size: 1.5rem; color: #fff; margin-bottom: 10px; min-height: 58px; overflow: hidden; }
+        .calc-btn { background-color: var(--bg-input); border: 1px solid var(--border); padding: 14px; border-radius: 6px; color: #fff; font-size: 1.1rem; cursor: pointer; font-weight: 600; }
+        .calc-btn:hover { background-color: var(--border); }
+        .calc-btn.op { color: var(--accent); }
+        .calc-btn.eq { background-color: var(--accent); color: #fff; }
+        .calc-btn.eq:hover { background-color: var(--accent-hover); }
+        /* Ad & Affiliate Slots */
+        .ad-banner { background: linear-gradient(90deg, #150f29 0%, #1c143a 100%); border: 1px dashed var(--accent); border-radius: 8px; padding: 15px; text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; position: relative; }
+        .ad-banner a { color: var(--accent); font-weight: bold; text-decoration: none; }
+        .ad-banner a:hover { text-decoration: underline; }
+        @media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Crypto Calc Grid</h1>
+        <p>Premium Structural Tools & Non-Scraped Analytical Matrices</p>
+    </header>
+
+    <div class="main-container">
+        <!-- Main Column: High-Traffic Utilities -->
+        <div class="left-column">
+            
+            <!-- Dynamic Monetization Banner Slot -->
+            <div class="ad-banner">
+                💡 <strong>Featured Partnership Opportunity:</strong> Ready to activate your plan? Secure your systematic recurring purchase schedule automatically with top trusted options. <a href="#affiliate-link" target="_blank" rel="nofollow">Create Verified Account Today &rarr;</a>
+                <!-- Future Google AdSense Code can be safely pasted here -->
+            </div>
+
+            <!-- TOOL 1: DCA PLANNER -->
+            <div class="card">
+                <div class="card-title">📈 Long-Term Capital DCA Planner</div>
+                <div class="card-description">
+                    Maps regular structural contributions against custom compounding parameters. This tool simulates continuous capital acquisition trajectories using constant mathematics without dependency on flaky, live scraped scraping pipelines.
+                </div>
+                
+                <div class="input-group">
+                    <label>Recurring Investment Amount ($)</label>
+                    <input type="number" id="dca-amount" value="50" oninput="calculateDCA()">
+                </div>
+                <div class="input-group">
+                    <label>Contribution Interval</label>
+                    <select id="dca-interval" onchange="calculateDCA()">
+                        <option value="52">Weekly</option>
+                        <option value="26">Bi-Weekly</option>
+                        <option value="12">Monthly</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Simulated Horizon Length (Years)</label>
+                    <input type="number" id="dca-years" value="5" min="1" max="50" oninput="calculateDCA()">
+                </div>
+                <div class="input-group">
+                    <label>Estimated Constant Annual Return (%)</label>
+                    <input type="number" id="dca-rate" value="15" oninput="calculateDCA()">
+                </div>
+
+                <div class="grid-outputs">
+                    <div class="stat-box">
+                        <label>Total Principal Deposited</label>
+                        <div id="out-principal" class="stat-val">$13,000</div>
+                    </div>
+                    <div class="stat-box">
+                        <label>Projected Future Value</label>
+                        <div id="out-total" class="stat-val">$19,411</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL 2: FRACTIONAL MATRIX -->
+            <div class="card">
+                <div class="card-title">🔢 Cryptographic Fractional Matrix</div>
+                <div class="card-description">
+                    Deconstructs complex high-value coin whole tokens into their native, immutable sub-denominations. Essential for calculating exact transaction overheads, micro-transfers, and accounting ledger precision.
+                </div>
+                
+                <div class="input-group">
+                    <label>Enter Whole Token Value (Base unit of 1.0)</label>
+                    <input type="number" id="matrix-input" value="1.0" step="0.0001" oninput="calculateMatrix()">
+                </div>
+
+                <table class="matrix-table">
+                    <thead>
+                        <tr>
+                            <th>Network Asset</th>
+                            <th>Sub-Denomination Component</th>
+                            <th>Calculated Matrix Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Bitcoin (BTC)</strong></td>
+                            <td>Satoshis (Sats)</td>
+                            <td id="mat-sats" style="font-weight: 700; color: var(--accent);">100,000,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bitcoin (BTC)</strong></td>
+                            <td>Microbitcoins (μBTC)</td>
+                            <td id="mat-ubtc">1,000,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ethereum (ETH)</strong></td>
+                            <td>Gwei (Gas Unit)</td>
+                            <td id="mat-gwei" style="font-weight: 700; color: var(--accent);">1,000,000,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ethereum (ETH)</strong></td>
+                            <td>Wei</td>
+                            <td id="mat-wei" style="font-size: 0.85rem; word-break: break-all;">1,000,000,000,000,000,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TOOL 3: AUTHORITY REFERENCE HIGHLIGHTS -->
+            <div class="card">
+                <div class="card-title">📖 Historical Performance Benchmarks</div>
+                <div class="card-description">
 
